@@ -1,6 +1,7 @@
 /**
  * Australian Tax Calculations - 2024-25 Tax Year
  * Based on ATO official tax brackets and Medicare levy
+ * @fileoverview TypeScript declarations for tax calculation functions
  */
 
 // 2024-25 Tax Brackets for Australian Residents
