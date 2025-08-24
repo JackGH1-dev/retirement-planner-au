@@ -6,7 +6,9 @@
       "WebSearch",
       "WebFetch(domain:www.ato.gov.au)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git tag:*)"
     ],
     "deny": [],
     "ask": []

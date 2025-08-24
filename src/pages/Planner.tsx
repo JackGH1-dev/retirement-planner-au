@@ -316,6 +316,13 @@ const Planner: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Version Information */}
+          <div className="text-center mt-8 py-4">
+            <p className="text-xs text-gray-400">
+              Retirement Planner v1.01 • Australian-focused • Built with Claude Code
+            </p>
+          </div>
         </div>
       </div>
     </ErrorBoundary>
