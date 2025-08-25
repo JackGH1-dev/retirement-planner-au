@@ -90,7 +90,18 @@ export const Results: React.FC<ResultsProps> = ({
   // Super access and bridge years
   const superAccessAge = 60
   const bridgeYears = Math.max(0, superAccessAge - retirementAge)
-  const bridgeNeedMonthly = bridgeYears > 0 ? (targetIncome / 12) : 0
+  
+  // Calculate bridge need based on goal type
+  let bridgeNeedMonthly = 0
+  if (bridgeYears > 0) {
+    if (goalType === 'capital') {
+      // For capital goals, use the 4% withdrawal rule to get monthly income needed
+      bridgeNeedMonthly = (targetCapital * 0.04) / 12
+    } else {
+      // For income goals, use the target income directly
+      bridgeNeedMonthly = targetIncome / 12
+    }
+  }
   const bridgeNeedTotal = bridgeNeedMonthly * bridgeYears * 12
 
   // Asset allocation percentages
