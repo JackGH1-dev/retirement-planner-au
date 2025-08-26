@@ -39,13 +39,13 @@ export const CurrentFinancials: React.FC<CurrentFinancialsProps> = ({
 }) => {
   // Main inputs (always visible)
   const [salary, setSalary] = useState(incomeExpense?.salary || 75000)
-  const [monthlySpending, setMonthlySpending] = useState(4000)
+  const [monthlySpending, setMonthlySpending] = useState(incomeExpense?.monthlyExpenses ?? 2850)
   const [superBalance, setSuperBalance] = useState(superState?.currentBalance || 50000)
-  const [monthlyInvesting, setMonthlyInvesting] = useState(portfolio?.monthlyInvestment || 1000)
+  const [monthlyInvesting, setMonthlyInvesting] = useState(portfolio?.monthlyInvestment ?? 0)
   
   // Advanced inputs (progressive disclosure)
   const [showMoreDetails, setShowMoreDetails] = useState(false)
-  const [salarySacrifice, setSalarySacrifice] = useState(superState?.salaryPackaging || 500)
+  const [salarySacrifice, setSalarySacrifice] = useState(superState?.salaryPackaging ?? 0)
   const [superOption, setSuperOption] = useState(superState?.option || 'HighGrowth')
   const [etfStrategy, setEtfStrategy] = useState(portfolio?.allocationPreset || 'OneETF')
   const [emergencyMonths, setEmergencyMonths] = useState(buffers?.emergencyMonths || 6)
@@ -55,7 +55,7 @@ export const CurrentFinancials: React.FC<CurrentFinancialsProps> = ({
   const [isRenting, setIsRenting] = useState(false)
   const [monthlyRent, setMonthlyRent] = useState(0)
   const [householdType, setHouseholdType] = useState('single')
-  const [useHEM, setUseHEM] = useState(false)
+  const [useHEM, setUseHEM] = useState(incomeExpense?.monthlyExpenses ? false : true)
   
   // HEM estimates (Australian Bureau of Statistics)
   const hemEstimates = {

@@ -4,15 +4,16 @@
  */
 
 import React, { useState } from 'react'
+import { ScenarioManager } from './ScenarioManager'
 
 interface ResultsProps {
   kpis: any
   series: any
   plannerState: any
   onExportCSV: () => void
-  onSave: () => void
   quickWin?: any
   onPrevious?: () => void
+  onLoadScenario?: (plannerState: any) => void
 }
 
 export const Results: React.FC<ResultsProps> = ({
@@ -20,10 +21,12 @@ export const Results: React.FC<ResultsProps> = ({
   series,
   plannerState,
   onExportCSV,
-  onSave,
   quickWin,
-  onPrevious
+  onPrevious,
+  onLoadScenario
 }) => {
+  // Toggle between today's dollars and future dollars
+  const [showTodaysDollars, setShowTodaysDollars] = useState(true)
   // Calculate results from planner state
   const currentAge = plannerState?.goal?.currentAge || 30
   const retirementAge = plannerState?.goal?.retirementAge || 65
@@ -31,6 +34,8 @@ export const Results: React.FC<ResultsProps> = ({
   const goalType = plannerState?.goal?.goalType || 'income'
   const targetIncome = plannerState?.goal?.targetIncome || 80000
   const targetCapital = goalType === 'capital' ? targetIncome : null // When capital mode, targetIncome holds the nest egg amount
+  const riskProfile = plannerState?.goal?.riskProfile || 'balanced'
+  const marketOutlook = plannerState?.goal?.marketOutlook || 0
   
   const salary = plannerState?.incomeExpense?.salary || 75000
   const superBalance = plannerState?.super?.currentBalance || 50000
@@ -48,34 +53,86 @@ export const Results: React.FC<ResultsProps> = ({
   const annualSalarySacrifice = salarySacrifice * 12
   const totalAnnualSuperContributions = annualSGContribution + annualSalarySacrifice
   
-  // Realistic super return assumptions (after tax and fees)
-  const grossReturn = 0.075 // 7.5% gross return (industry standard)
-  const superTaxRate = 0.15 // 15% tax on earnings within super
-  const investmentFeeRate = 0.008 // 0.8% average investment fees
-  const adminFeeAnnual = 80 // Average admin fee per year
-  const netReturn = grossReturn * (1 - superTaxRate) - investmentFeeRate // ~5.575%
-  
-  // Calculate super growth with realistic returns
-  const currentSuperGrowth = superBalance * Math.pow(1 + netReturn, yearsToRetirement)
-  const superContributionGrowth = totalAnnualSuperContributions * ((Math.pow(1 + netReturn, yearsToRetirement) - 1) / netReturn)
-  
-  // Subtract cumulative admin fees (with inflation)
-  const inflationRate = 0.025
-  let totalAdminFees = 0
-  for (let year = 1; year <= yearsToRetirement; year++) {
-    totalAdminFees += adminFeeAnnual * Math.pow(1 + inflationRate, year - 1)
+  // Dynamic return assumptions based on user's risk profile and market outlook
+  const getReturnAssumptions = () => {
+    // Base return rates by risk profile
+    const riskReturns = {
+      conservative: { super: 0.045, etf: 0.055, property: 0.04 },
+      balanced: { super: 0.055, etf: 0.065, property: 0.05 },
+      growth: { super: 0.065, etf: 0.075, property: 0.06 }
+    }
+    
+    // Market outlook adjustment (direct percentage from slider)
+    const baseReturns = riskReturns[riskProfile] || riskReturns.balanced
+    const adjustment = marketOutlook / 100 // Convert percentage to decimal
+    
+    return {
+      super: Math.max(0.02, baseReturns.super + adjustment), // Minimum 2%
+      etf: Math.max(0.03, baseReturns.etf + adjustment),     // Minimum 3%
+      property: Math.max(0.02, baseReturns.property + adjustment) // Minimum 2%
+    }
   }
   
-  const superProjection = Math.max(0, currentSuperGrowth + superContributionGrowth - totalAdminFees)
+  const returnAssumptions = getReturnAssumptions()
+  const nominalNetReturn = returnAssumptions.super // Use dynamic super return
+  const wageInflation = 0.034 // 3.4% wage inflation (ABS current rate)
+  const cpiInflation = 0.025 // 2.5% CPI inflation
+  const livingStandardsInflation = 0.012 // 1.2% living standards increase
+  const totalInflationDeflator = cpiInflation + livingStandardsInflation // 3.7% total
+  const realNetReturn = nominalNetReturn - totalInflationDeflator // ~1.8% real return
   
-  // Realistic ETF projection calculation (updated with fees and tax considerations)
-  const etfGrossReturn = 0.08 // 8% gross market return assumption
+  const adminFeeAnnual = 74 // MoneySmart standard admin fee
+  const insuranceFeeAnnual = 214 // MoneySmart standard insurance premium
+  const inflationRate = cpiInflation // For backward compatibility with chart generation
+  const netReturn = realNetReturn // For backward compatibility with chart generation
+  
+  // Calculate super growth in today's dollar terms (inflation-adjusted)
+  // Current balance grows with real return
+  const currentSuperGrowth = superBalance * Math.pow(1 + realNetReturn, yearsToRetirement)
+  
+  // MoneySmart-style calculation: average salary growth method
+  let totalRealContributionValue = 0
+  for (let year = 1; year <= yearsToRetirement; year++) {
+    // Use average salary over the year (MoneySmart approach)
+    const startSalary = salary * Math.pow(1 + wageInflation, year - 1)
+    const endSalary = salary * Math.pow(1 + wageInflation, year)
+    const avgSalary = (startSalary + endSalary) / 2
+    const grossContribution = avgSalary * sgRate
+    const netContribution = grossContribution * (1 - 0.15) // 15% tax on contributions
+    const yearsToGrow = yearsToRetirement - year
+    const futureValueOfContribution = netContribution * Math.pow(1 + nominalNetReturn, yearsToGrow)
+    const realValueOfContribution = futureValueOfContribution / Math.pow(1 + totalInflationDeflator, yearsToRetirement)
+    totalRealContributionValue += realValueOfContribution
+  }
+  const superContributionGrowth = totalRealContributionValue
+  
+  // Calculate fees in today's dollar terms
+  let totalRealFees = 0
+  for (let year = 1; year <= yearsToRetirement; year++) {
+    const inflatedFees = (adminFeeAnnual + insuranceFeeAnnual) * Math.pow(1 + cpiInflation, year - 1)
+    const realFees = inflatedFees / Math.pow(1 + totalInflationDeflator, yearsToRetirement)
+    totalRealFees += realFees
+  }
+  const totalSuperFees = totalRealFees
+  
+  // Calculate both nominal (future dollars) and real (today's dollars) projections
+  const nominalSuperProjection = superBalance * Math.pow(1 + nominalNetReturn, yearsToRetirement) + 
+    totalAnnualSuperContributions * ((Math.pow(1 + nominalNetReturn, yearsToRetirement) - 1) / nominalNetReturn) - 
+    (60 + 150) * yearsToRetirement // Simple nominal calculation
+  
+  const realSuperProjection = Math.max(0, currentSuperGrowth + superContributionGrowth - totalSuperFees)
+  
+  // Use the selected projection type
+  const superProjection = showTodaysDollars ? realSuperProjection : nominalSuperProjection
+  
+  // ETF projection with dynamic returns based on risk profile and assumptions
+  const etfGrossReturn = returnAssumptions.etf + 0.015 // Add back fees that will be deducted
   const etfManagementFee = 0.0018 // Weighted average: VDHG 0.27%, VAS 0.07%, VGS 0.18% ≈ 0.18%
   const etfPlatformFee = 0.0005 // Typical brokerage platform fees annualized
   const etfTaxDrag = 0.005 // ~0.5% tax drag from distributions and capital gains in accumulation phase
   
-  // Net ETF return after all costs
-  const etfNetReturn = etfGrossReturn - etfManagementFee - etfPlatformFee - etfTaxDrag // ~7.15%
+  // Net ETF return after all costs (uses dynamic return based on user selection)
+  const etfNetReturn = returnAssumptions.etf
   
   // Calculate ETF projection with more realistic returns
   // Handle zero monthly investment case properly
@@ -209,7 +266,7 @@ export const Results: React.FC<ResultsProps> = ({
 
   const quickWinSuggestion = getQuickWin()
 
-  // Generate accumulation data for charts
+  // Generate accumulation data for charts - use same final values as main calculation
   const generateAccumulationData = () => {
     const data = []
     const currentYear = new Date().getFullYear()
@@ -217,35 +274,28 @@ export const Results: React.FC<ResultsProps> = ({
     for (let year = 0; year <= yearsToRetirement; year++) {
       const age = currentAge + year
       
-      // Super accumulation (using same realistic returns as main calculation)
-      const yearlyAdminFee = adminFeeAnnual * Math.pow(1 + inflationRate, year)
-      const cumulativeAdminFees = year > 0 ? (adminFeeAnnual * ((Math.pow(1 + inflationRate, year) - 1) / inflationRate)) : 0
+      // Super accumulation: interpolate between current and final projection
+      const superTotal = year === 0 
+        ? superBalance 
+        : year === yearsToRetirement 
+          ? superProjection // Use exact same final value as main calculation
+          : superBalance + (superProjection - superBalance) * Math.pow(year / yearsToRetirement, 1.5) // Exponential growth curve
       
-      const superCurrentGrowth = superBalance * Math.pow(1 + netReturn, year)
-      const superContributionGrowth = year > 0 
-        ? totalAnnualSuperContributions * ((Math.pow(1 + netReturn, year) - 1) / netReturn) 
-        : 0
-      const superTotal = Math.max(0, superCurrentGrowth + superContributionGrowth - cumulativeAdminFees)
+      // ETF accumulation: interpolate between current and final projection
+      const currentETFValue = 0 // Starting value
+      const etfTotal = year === 0 
+        ? currentETFValue 
+        : year === yearsToRetirement 
+          ? etfProjection // Use exact same final value as main calculation
+          : currentETFValue + (etfProjection - currentETFValue) * Math.pow(year / yearsToRetirement, 1.5) // Exponential growth curve
       
-      // ETF accumulation (using same realistic returns as main calculation)
-      // Current balance growth + contribution growth
-      const etfCurrentGrowth = currentETFBalance > 0 && year > 0
-        ? currentETFBalance * Math.pow(1 + etfNetReturn, year)
-        : 0
-      
-      const etfContributionGrowth = (year > 0 && monthlyInvestment > 0) 
-        ? (monthlyInvestment * 12) * ((Math.pow(1 + etfNetReturn, year) - 1) / etfNetReturn)
-        : 0
-        
-      const etfTotal = etfCurrentGrowth + etfContributionGrowth
-      
-      // Property accumulation (if applicable)
-      let propertyTotal = 0
-      if (hasProperty && propertyValue > 0) {
-        const propertyGrowthRate = 0.05
-        const futurePropertyValue = propertyValue * Math.pow(1 + propertyGrowthRate, year)
-        propertyTotal = Math.max(0, futurePropertyValue - propertyLoan)
-      }
+      // Property accumulation: interpolate between current and final projection
+      const currentPropertyValue = hasProperty ? Math.max(0, propertyValue - propertyLoan) : 0
+      const propertyTotal = year === 0 
+        ? currentPropertyValue 
+        : year === yearsToRetirement 
+          ? propertyEquity // Use exact same final value as main calculation
+          : currentPropertyValue + (propertyEquity - currentPropertyValue) * Math.pow(year / yearsToRetirement, 1.5) // Exponential growth curve
       
       const totalWealth = superTotal + etfTotal + propertyTotal
       
@@ -263,6 +313,16 @@ export const Results: React.FC<ResultsProps> = ({
   }
 
   const chartData = generateAccumulationData()
+  
+  // Debug: Compare final chart value with main calculation
+  const finalChartSuper = chartData[chartData.length - 1]?.super || 0
+  console.log('🔍 Super calculation comparison:')
+  console.log('  Main calculation (realSuperProjection):', realSuperProjection.toLocaleString())
+  console.log('  Main calculation (nominalSuperProjection):', nominalSuperProjection.toLocaleString())
+  console.log('  Main calculation (final superProjection):', superProjection.toLocaleString())
+  console.log('  Chart calculation (final year):', finalChartSuper.toLocaleString())
+  console.log('  showTodaysDollars:', showTodaysDollars)
+  
   const maxValue = Math.max(...chartData.map(d => d.total))
 
   // Chart component for individual buckets
@@ -599,7 +659,51 @@ export const Results: React.FC<ResultsProps> = ({
 
   return (
     <div className="space-y-8">
+      
       <div className="bg-white rounded-2xl shadow-xl p-8">
+        {/* Dollar Type Toggle */}
+        <div className="flex justify-center mb-6">
+          <div className="bg-gray-100 rounded-lg p-1 flex">
+            <button
+              onClick={() => setShowTodaysDollars(true)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                showTodaysDollars 
+                  ? 'bg-blue-600 text-white shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Today's Dollars
+            </button>
+            <button
+              onClick={() => setShowTodaysDollars(false)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                !showTodaysDollars 
+                  ? 'bg-blue-600 text-white shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Future Dollars
+            </button>
+          </div>
+        </div>
+
+        {/* Explanation of selected mode */}
+        <div className="text-center mb-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm">
+            {showTodaysDollars ? (
+              <>
+                <strong>Today's Dollars:</strong> Shows what your super will be worth in today's purchasing power, 
+                adjusted for inflation (like MoneySmart calculator)
+              </>
+            ) : (
+              <>
+                <strong>Future Dollars:</strong> Shows the actual dollar amount you'll have, 
+                before adjusting for inflation over {yearsToRetirement} years
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Plain-English Headline */}
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
@@ -1011,6 +1115,19 @@ export const Results: React.FC<ResultsProps> = ({
           </div>
         </div>
 
+        {/* Retirement Plan Manager - moved from top */}
+        {plannerState && onLoadScenario && (
+          <div className="mb-8">
+            <ScenarioManager
+              plannerState={plannerState}
+              onLoadScenario={onLoadScenario}
+              onScenarioSaved={() => {
+                console.log('[Results] Scenario saved successfully')
+              }}
+            />
+          </div>
+        )}
+
         {/* Navigation and Actions */}
         <div className="flex justify-between items-center mb-8">
           {onPrevious && (
@@ -1030,12 +1147,6 @@ export const Results: React.FC<ResultsProps> = ({
               📄 Download your plan
             </button>
             <button
-              onClick={onSave}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
-            >
-              💾 Save this scenario
-            </button>
-            <button
               onClick={() => window.history.back()}
               className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium transition-colors"
               title="Go back to adjust properties and manage scenarios"
@@ -1049,8 +1160,8 @@ export const Results: React.FC<ResultsProps> = ({
         <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg text-sm text-gray-700 mt-8">
           <div className="font-semibold text-blue-900 mb-2">💡 About These Projections</div>
           <div className="space-y-2">
-            <div><strong>Super assumptions:</strong> 7.5% gross returns, 15% tax on earnings, 0.8% investment fees, $80/year admin fees (≈5.6% net)</div>
-            <div><strong>ETF assumptions:</strong> 8% gross market returns, 0.18% management fees, 0.05% platform fees, 0.5% tax drag (≈7.2% net)</div>
+            <div><strong>Super assumptions:</strong> {(returnAssumptions.super * 100).toFixed(1)}% nominal return (Risk: {riskProfile.charAt(0).toUpperCase() + riskProfile.slice(1)}, Market: {marketOutlook > 0 ? '+' : ''}{marketOutlook.toFixed(1)}%), {((returnAssumptions.super - totalInflationDeflator) * 100).toFixed(1)}% real return after 3.7% inflation adjustment. Uses MoneySmart methodology with dynamic return rates.</div>
+            <div><strong>ETF assumptions:</strong> {(returnAssumptions.etf * 100).toFixed(1)}% net return after fees and tax (Risk: {riskProfile.charAt(0).toUpperCase() + riskProfile.slice(1)}, Market: {marketOutlook > 0 ? '+' : ''}{marketOutlook.toFixed(1)}%)</div>
             <div><strong>Property assumptions:</strong> 5% annual capital growth</div>
             <div className="pt-2 border-t border-blue-200">
               <strong>Important:</strong> These are estimates based on long-term averages. Actual returns will vary. 

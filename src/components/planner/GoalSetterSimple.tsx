@@ -3,7 +3,7 @@
  * Beginner-friendly version with presets and plain-English copy
  */
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ScenarioManager } from './ScenarioManager'
 
 interface GoalSetterProps {
@@ -23,12 +23,24 @@ export const GoalSetter: React.FC<GoalSetterProps> = ({
   plannerState,
   onLoadScenario
 }) => {
-  const [goalType, setGoalType] = useState('income')
-  const [currentAge, setCurrentAge] = useState(30)
-  const [retirementAge, setRetirementAge] = useState(65)
-  const [targetIncome, setTargetIncome] = useState(80000)
-  const [riskProfile, setRiskProfile] = useState('balanced')
-  const [assumptionPreset, setAssumptionPreset] = useState('Base')
+  const [goalType, setGoalType] = useState(value?.goalType || 'income')
+  const [currentAge, setCurrentAge] = useState(value?.currentAge || 30)
+  const [retirementAge, setRetirementAge] = useState(value?.retirementAge || 65)
+  const [targetIncome, setTargetIncome] = useState(value?.targetIncome || 80000)
+  const [riskProfile, setRiskProfile] = useState(value?.riskProfile || 'balanced')
+  const [marketOutlook, setMarketOutlook] = useState(value?.marketOutlook || 0)
+
+  // Update state when value prop changes (e.g., when loading a scenario)
+  useEffect(() => {
+    if (value) {
+      setGoalType(value.goalType || 'income')
+      setCurrentAge(value.currentAge || 30)
+      setRetirementAge(value.retirementAge || 65)
+      setTargetIncome(value.targetIncome || 80000)
+      setRiskProfile(value.riskProfile || 'balanced')
+      setMarketOutlook(value.marketOutlook || 0)
+    }
+  }, [value])
 
   const handleComplete = () => {
     const goalData = {
@@ -37,22 +49,25 @@ export const GoalSetter: React.FC<GoalSetterProps> = ({
       retirementAge,
       targetIncome,
       riskProfile,
-      assumptionPreset
+      marketOutlook
     }
     onChange(goalData)
     onComplete(goalData)
   }
 
-  const presetDescriptions = {
-    Conservative: 'Lower returns, safer approach',
-    Base: 'Typical long-term returns with moderate bumps',
-    Optimistic: 'Higher returns, more market ups and downs'
+  // Market outlook helper function
+  const getMarketOutlookLabel = (value) => {
+    if (value <= -1) return 'Weak Markets'
+    if (value < 0) return 'Below Average'
+    if (value === 0) return 'Neutral'
+    if (value < 1) return 'Above Average'
+    return 'Strong Markets'
   }
 
   const riskProfiles = {
-    conservative: { label: 'Conservative', desc: 'Steady and safe' },
-    balanced: { label: 'Balanced', desc: 'Mix of growth and safety' },
-    growth: { label: 'Growth', desc: 'Higher growth potential' }
+    conservative: { label: 'Conservative', desc: '4.5-5.5% avg returns' },
+    balanced: { label: 'Balanced', desc: '5.5-6.5% avg returns' },
+    growth: { label: 'Growth', desc: '6.5-7.5% avg returns' }
   }
 
   // Smart retirement age suggestion
@@ -192,27 +207,38 @@ export const GoalSetter: React.FC<GoalSetterProps> = ({
           <p className="text-sm text-gray-500 mt-2">Balanced is a good choice if you're unsure.</p>
         </div>
 
-        {/* Assumption Presets */}
+        {/* Market Outlook Slider */}
         <div>
           <label className="block text-sm font-medium text-gray-900 mb-3">
-            What returns do you want to plan for?
+            What's your market outlook?
           </label>
-          <div className="grid grid-cols-3 gap-3">
-            {['Conservative', 'Base', 'Optimistic'].map((preset) => (
-              <button
-                key={preset}
-                onClick={() => setAssumptionPreset(preset)}
-                className={`p-3 rounded-lg border-2 text-center transition-colors ${
-                  assumptionPreset === preset
-                    ? 'border-green-500 bg-green-50 text-green-900'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <div className="font-medium">{preset}</div>
-                <div className="text-xs text-gray-600 mt-1">{presetDescriptions[preset as keyof typeof presetDescriptions]}</div>
-              </button>
-            ))}
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="relative">
+              <input
+                type="range"
+                min="-1.5"
+                max="1.5"
+                step="0.1"
+                value={marketOutlook}
+                onChange={(e) => setMarketOutlook(parseFloat(e.target.value))}
+                className="w-full h-3 bg-gradient-to-r from-red-200 via-gray-200 to-green-200 rounded-lg appearance-none cursor-pointer slider"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-2">
+                <span>Weak Markets<br/>-1.5%</span>
+                <span className="text-center">Neutral<br/>0%</span>
+                <span className="text-right">Strong Markets<br/>+1.5%</span>
+              </div>
+            </div>
+            <div className="text-center mt-4">
+              <div className="inline-flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border">
+                <span className="font-medium text-gray-900">{getMarketOutlookLabel(marketOutlook)}</span>
+                <span className="text-sm text-gray-600">
+                  ({marketOutlook > 0 ? '+' : ''}{marketOutlook.toFixed(1)}%)
+                </span>
+              </div>
+            </div>
           </div>
+          <p className="text-sm text-gray-500 mt-2">Adjust based on your view of future market conditions. 0% uses historical averages.</p>
         </div>
 
         <div className="flex justify-end pt-6 border-t">

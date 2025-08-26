@@ -14,15 +14,15 @@ const initialPlannerState = {
   },
   incomeExpense: {
     salary: 75000,
-    monthlyExpenses: 4000
+    monthlyExpenses: 2850  // Default to HEM single household estimate instead of generic $4000
   },
   super: {
     currentBalance: 50000,
-    salaryPackaging: 500
+    salaryPackaging: 0  // Changed from 500 to 0 - no default extra super contributions
   },
   portfolio: {
     currentValue: 0,
-    monthlyInvestment: 1000
+    monthlyInvestment: 0  // Changed from 1000 to 0 - no default monthly investment
   },
   property: {
     hasProperty: false

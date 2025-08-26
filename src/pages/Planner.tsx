@@ -127,16 +127,33 @@ const Planner: React.FC = () => {
 
   const handleSaveScenario = async (name?: string) => {
     try {
-      await savePlannerState(name || plannerState.scenarioName || 'My Retirement Plan')
+      // Use our robust ScenarioManager save system instead of savePlannerState
+      const { saveScenario } = await import('../utils/scenarioManager')
       
-      // Show success toast (implement toast context)
-      console.log('Scenario saved successfully!')
+      let scenarioName = name
+      if (!scenarioName) {
+        // Prompt user for scenario name
+        scenarioName = prompt(
+          'Enter a name for your retirement plan:',
+          plannerState.scenarioName || 'My Retirement Plan'
+        )
+        
+        if (!scenarioName || !scenarioName.trim()) {
+          return // User cancelled or entered empty name
+        }
+      }
+      
+      await saveScenario(scenarioName.trim(), plannerState)
+      
+      // Show success message
+      alert(`Retirement plan "${scenarioName}" saved successfully!`)
+      console.log('Scenario saved successfully:', scenarioName)
       
       // Analytics (simplified for demo)
-      console.log('Scenario saved:', plannerState.scenarioName)
+      console.log('Scenario saved:', scenarioName)
     } catch (error) {
       console.error('Failed to save scenario:', error)
-      // Show error toast
+      alert(`Failed to save retirement plan: ${error.message || 'Please try again.'}`)
     }
   }
 
@@ -155,25 +172,132 @@ const Planner: React.FC = () => {
     }
   }
 
-  // Step progress calculation
-  const stepProgress = useMemo(() => {
-    switch (currentStep) {
-      case 'goal': return 20
-      case 'financials': return 40
-      case 'property': return 60
-      case 'modules': return 80
-      case 'results': return 100
-      default: return 0
+  // Track auto-save scenario ID to ensure single auto-save
+  const [autoSaveId, setAutoSaveId] = useState<string | null>(null)
+  
+  // Auto-save function when changing tabs - maintains single auto-save
+  const handleTabChange = async (newTab: PlannerStep) => {
+    if (newTab === currentStep) return
+    
+    try {
+      // Auto-save current state before switching
+      console.log(`[Planner] Auto-saving before switching from ${currentStep} to ${newTab}`)
+      
+      // Import and use our robust scenario manager for auto-save
+      const { saveScenario, getSavedScenarios } = await import('../utils/scenarioManager')
+      
+      // Find existing auto-save scenario or create new one
+      let existingAutoSaveId = autoSaveId
+      if (!existingAutoSaveId) {
+        const existingScenarios = getSavedScenarios()
+        const existingAutoSave = existingScenarios.find(s => s.name === 'Auto-save (Current Session)')
+        if (existingAutoSave) {
+          existingAutoSaveId = existingAutoSave.id
+          setAutoSaveId(existingAutoSave.id)
+        }
+      }
+      
+      const scenario = await saveScenario(
+        'Auto-save (Current Session)', 
+        plannerState, 
+        `Auto-saved while working on ${tabConfig[currentStep].title}`,
+        existingAutoSaveId || undefined // Update existing or create new
+      )
+      
+      // Store the auto-save ID for future updates
+      if (!autoSaveId) {
+        setAutoSaveId(scenario.id)
+      }
+      
+      console.log(`[Planner] Auto-save successful (${existingAutoSaveId ? 'updated' : 'created'}), switching to ${newTab}`)
+    } catch (error) {
+      console.warn(`[Planner] Auto-save failed:`, error)
+      // Continue with tab switch even if auto-save fails
     }
+    
+    setCurrentStep(newTab)
+    
+    // If switching to results, trigger calculation
+    if (newTab === 'results') {
+      setShowResults(true)
+    }
+  }
+  
+  // Calculate completion status for each tab
+  const getTabCompletionStatus = (tabKey: PlannerStep) => {
+    switch (tabKey) {
+      case 'goal':
+        return plannerState?.goal?.currentAge && plannerState?.goal?.retirementAge ? 'complete' : 'incomplete'
+      case 'financials':
+        return plannerState?.incomeExpense?.salary && plannerState?.super?.currentBalance ? 'complete' : 'incomplete'
+      case 'property':
+        return 'optional' // Property is always optional
+      case 'modules':
+        return plannerState?.portfolio?.monthlyInvestment !== undefined ? 'complete' : 'incomplete'
+      case 'results':
+        return result ? 'complete' : 'pending'
+      default:
+        return 'incomplete'
+    }
+  }
+  
+  // Track visited tabs to ensure progress reaches 100%
+  const [visitedTabs, setVisitedTabs] = useState<Set<PlannerStep>>(new Set(['goal']))
+  
+  // Update visited tabs when changing steps
+  useEffect(() => {
+    setVisitedTabs(prev => new Set([...prev, currentStep]))
   }, [currentStep])
+  
+  // Calculate overall progress percentage
+  const calculateOverallProgress = () => {
+    const tabs = Object.keys(tabConfig) as PlannerStep[]
+    const totalTabs = tabs.length
+    
+    // Simple calculation: percentage of tabs visited
+    const visitedCount = visitedTabs.size
+    const progressPercent = Math.min(100, (visitedCount / totalTabs) * 100)
+    
+    // If all tabs have been visited, ensure we show 100%
+    if (visitedTabs.size >= totalTabs) {
+      return 100
+    }
+    
+    return Math.round(progressPercent)
+  }
 
-  // Step titles for UI
-  const stepTitles = {
-    goal: 'Your Goals',
-    financials: 'Current Situation',
-    property: 'Property Details', 
-    modules: 'Investment Strategy',
-    results: 'Your Plan Results'
+  // Tab configuration with descriptive names and descriptions
+  const tabConfig = {
+    goal: {
+      title: 'Retirement Goals',
+      description: 'Define your retirement vision',
+      icon: '🎯',
+      shortDesc: 'When & how much you want to retire with'
+    },
+    financials: {
+      title: 'Current Finances', 
+      description: 'Your income, expenses & super',
+      icon: '💰',
+      shortDesc: 'Salary, super balance, and monthly expenses'
+    },
+    property: {
+      title: 'Property Portfolio',
+      description: 'Existing properties & future plans',
+      icon: '🏠',
+      shortDesc: 'Properties you own or plan to buy'
+    },
+    modules: {
+      title: 'Investment Strategy',
+      description: 'ETFs, contributions & emergency funds',
+      icon: '📈', 
+      shortDesc: 'How you\'ll invest outside of super and property'
+    },
+    results: {
+      title: 'Your Retirement Plan',
+      description: 'Complete analysis & projections',
+      icon: '🚀',
+      shortDesc: 'See if you\'re on track and get recommendations'
+    }
   }
 
   // Loading states
@@ -221,17 +345,74 @@ const Planner: React.FC = () => {
             </p>
           </div>
 
-          {/* Progress Bar */}
+          {/* Compact Card-based Navigation */}
           <div className="mb-8">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Step {currentStep === 'goal' ? 1 : currentStep === 'financials' ? 2 : currentStep === 'property' ? 3 : currentStep === 'modules' ? 4 : 5} of 5</span>
-              <span>{stepTitles[currentStep]}</span>
+            <div className="flex flex-wrap justify-center gap-3 mb-4">
+              {Object.entries(tabConfig).map(([tabKey, config]) => {
+                const isActive = currentStep === tabKey
+                const status = getTabCompletionStatus(tabKey as PlannerStep)
+                const hasVisited = visitedTabs.has(tabKey as PlannerStep)
+                
+                return (
+                  <button
+                    key={tabKey}
+                    onClick={() => handleTabChange(tabKey as PlannerStep)}
+                    className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 bg-white shadow-md hover:shadow-lg border-2 min-w-[120px] max-w-[160px] ${
+                      isActive 
+                        ? 'border-blue-500 bg-gradient-to-b from-blue-50 to-blue-100'
+                        : hasVisited
+                        ? 'border-green-200 hover:border-green-300'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    {/* Icon and Status */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{config.icon}</span>
+                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                        status === 'complete' ? 'bg-green-400' :
+                        status === 'optional' ? 'bg-yellow-400' :
+                        hasVisited ? 'bg-blue-400' : 'bg-gray-300'
+                      }`} />
+                    </div>
+                    
+                    {/* Title */}
+                    <span className={`text-center leading-tight ${
+                      isActive ? 'text-blue-700 font-semibold' : 'text-gray-700'
+                    }`}>
+                      {config.title}
+                    </span>
+                    
+                    {/* Optional subtitle for current step */}
+                    {isActive && (
+                      <span className="text-xs text-blue-600 text-center leading-tight opacity-80">
+                        {config.description}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
-            <div className="w-full bg-white/50 rounded-full h-3">
-              <div 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${stepProgress}%` }}
-              />
+            
+            {/* Progress Bar */}
+            <div className="mb-6">
+              <div className="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Completion Progress</span>
+                <span>{Math.round(calculateOverallProgress())}% Complete</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${calculateOverallProgress()}%` }}
+                />
+              </div>
+            </div>
+            
+            {/* Current tab description */}
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                {tabConfig[currentStep].icon} {tabConfig[currentStep].title}
+              </h2>
+              <p className="text-gray-600">{tabConfig[currentStep].description}</p>
             </div>
           </div>
 
@@ -298,9 +479,12 @@ const Planner: React.FC = () => {
                 series={result.series}
                 plannerState={plannerState}
                 onExportCSV={handleExportCSV}
-                onSave={handleSaveScenario}
                 quickWin={generateQuickWin(result, plannerState)}
                 onPrevious={handlePrevious}
+                onLoadScenario={(loadedState) => {
+                  console.log('[Planner] Loading scenario from Results:', loadedState)
+                  updatePlannerState(loadedState)
+                }}
               />
             )}
           </div>
