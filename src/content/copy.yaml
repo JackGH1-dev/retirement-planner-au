@@ -1,0 +1,437 @@
+# Copy content for Australian Retirement Planner
+# Specialized for Australian users aged 25-45 planning retirement
+
+# HECS/HELP Loan Integration Section
+hecsHelp:
+  # Checkbox and main field labels
+  checkbox:
+    label: "I have a HECS/HELP loan debt"
+    helpText: "HECS/HELP repayments reduce your available investing funds. We'll calculate this automatically based on your salary."
+    ariaLabel: "Include HECS/HELP loan repayments in calculations"
+  
+  # Progressive disclosure content
+  disclosure:
+    summary: "What is HECS/HELP and how does it affect my retirement planning?"
+    content: |
+      HECS (Higher Education Contribution Scheme) and HELP (Higher Education Loan Program) are government loans for university study.
+      
+      **How it impacts your retirement:**
+      • Repayments are automatically deducted from your salary by the ATO
+      • Reduces your take-home pay and available investing funds
+      • Higher earners pay more (up to 10% of income for high salaries)
+      • No interest charged, but indexed annually to inflation
+      
+      **We calculate this for you:** Based on your salary, we'll automatically work out your repayment percentage and reduce your available investing money accordingly.
+  
+  # Current debt input field (if showing advanced options)
+  debtAmount:
+    label: "Current HECS/HELP debt balance (optional)"
+    placeholder: "35,000"
+    helpText: "Check your myGov account for your exact balance. This helps us show when your debt will be paid off."
+    ariaLabel: "Enter your current HECS/HELP debt balance in dollars"
+  
+  # Repayment rate information
+  repaymentInfo:
+    title: "Your estimated HECS/HELP repayment"
+    calculatingText: "Calculating based on your salary..."
+    noRepaymentText: "No repayment required (salary below $51,550 threshold)"
+    
+  # Success/confirmation messages
+  success:
+    added: "HECS/HELP repayments included in your retirement calculations"
+    updated: "HECS/HELP information updated successfully"
+    removed: "HECS/HELP repayments removed from calculations"
+  
+  # Error messages
+  errors:
+    invalidDebt: "Please enter a valid debt amount between $1,000 and $200,000"
+    calculationError: "Unable to calculate HECS/HELP repayments. Please check your salary amount."
+    genericError: "There was an issue processing your HECS/HELP information. Please try again."
+  
+  # Contextual help and tips
+  tips:
+    earlyRepayment: |
+      **Tip:** You can make voluntary repayments to your HECS/HELP debt to reduce it faster. 
+      However, consider whether this money might earn better returns if invested instead, 
+      especially since HECS/HELP only charges inflation (not compound interest).
+    
+    salaryPackaging: |
+      **Note:** Salary packaging can reduce your HECS/HELP repayments by lowering your 
+      reportable income. This might free up more money for retirement investing.
+    
+    highEarners: |
+      **High earners:** With salaries over $131,989, you'll pay the maximum 10% HECS rate. 
+      This significantly impacts your available investing funds - our calculator accounts for this.
+  
+  # Repayment rate table (for reference/display)
+  repaymentRates:
+    title: "2025 HECS/HELP Repayment Rates"
+    subtitle: "Based on your reportable income"
+    note: "Rates are set by the Australian Government and updated annually"
+    
+    # These would be referenced in the calculation logic
+    thresholds:
+      - income: "$51,550 - $59,518"
+        rate: "1.0%"
+      - income: "$59,519 - $63,089"
+        rate: "2.0%"
+      - income: "$63,090 - $66,875"
+        rate: "2.5%"
+      - income: "$66,876 - $70,888"
+        rate: "3.0%"
+      - income: "$70,889 - $75,140"
+        rate: "3.5%"
+      - income: "$75,141 - $79,649"
+        rate: "4.0%"
+      - income: "$79,650 - $84,429"
+        rate: "4.5%"
+      - income: "$84,430 - $89,494"
+        rate: "5.0%"
+      - income: "$89,495 - $94,865"
+        rate: "5.5%"
+      - income: "$94,866 - $100,557"
+        rate: "6.0%"
+      - income: "$100,558 - $106,590"
+        rate: "6.5%"
+      - income: "$106,591 - $112,985"
+        rate: "7.0%"
+      - income: "$112,986 - $119,764"
+        rate: "7.5%"
+      - income: "$119,765 - $126,950"
+        rate: "8.0%"
+      - income: "$126,951 - $134,568"
+        rate: "8.5%"
+      - income: "$134,569 - $142,642"
+        rate: "9.0%"
+      - income: "$142,643 - $151,200"
+        rate: "9.5%"
+      - income: "$151,201+"
+        rate: "10.0%"
+
+# Integration with existing calculator sections
+integration:
+  incomeExpenses:
+    hecsSection:
+      title: "Education loan repayments"
+      subtitle: "HECS/HELP automatically calculated"
+      description: "Based on your salary, we'll include your compulsory education loan repayments in the calculation."
+      
+    afterTaxCalculation:
+      withHecs: "After tax, super guarantee, and HECS/HELP repayments"
+      withoutHecs: "After tax and super guarantee"
+      
+  results:
+    assumptions:
+      hecsIncluded: "HECS/HELP repayments included based on current rates"
+      hecsNotIncluded: "No HECS/HELP debt included"
+      
+    breakdown:
+      hecsLine: "Less: HECS/HELP repayments"
+      
+# Accessibility
+accessibility:
+  hecsCheckbox:
+    description: "Checkbox to include HECS or HELP loan repayments in retirement calculations"
+    instructions: "Check this box if you have education debt that reduces your available investing funds"
+    
+  repaymentDisplay:
+    description: "Shows your estimated HECS/HELP repayment amount and rate based on salary"
+    format: "Repayment amount displayed as dollars per year and percentage of income"
+    
+  helpContent:
+    description: "Expandable section explaining how HECS/HELP loans work and impact retirement planning"
+    instructions: "Click to expand for detailed explanation of Australian education loan repayments"
+
+# Form validation messages
+validation:
+  hecs:
+    required: "Please indicate whether you have HECS/HELP debt"
+    debtTooLow: "HECS/HELP debt must be at least $1,000"
+    debtTooHigh: "HECS/HELP debt cannot exceed $200,000"
+    invalidFormat: "Please enter a valid dollar amount"
+
+# Rent Separation Section
+rentSeparation:
+  # Checkbox and main field labels
+  checkbox:
+    label: "I'm currently renting"
+    helpText: "Rent is treated separately from other living expenses since it doesn't continue in retirement (most retirees own their home)."
+    ariaLabel: "Include rental payments as separate expense category"
+  
+  # Monthly rent input
+  monthlyRent:
+    label: "Monthly rent"
+    placeholder: "2,400"
+    helpText: "Enter your total monthly rent (including any rental increases you expect)"
+    ariaLabel: "Enter your monthly rent amount in dollars"
+    prefix: "$"
+    suffix: "/month"
+  
+  # Progressive disclosure content
+  disclosure:
+    summary: "Why is rent treated differently in retirement planning?"
+    content: |
+      **Rent vs. other expenses in retirement:**
+      • Most Australians aim to own their home by retirement age
+      • Rent payments typically stop when you retire (no ongoing mortgage/rent)
+      • Other living expenses (food, utilities, healthcare) continue throughout retirement
+      
+      **How this affects your planning:**
+      • We calculate your retirement needs based on expenses that will continue
+      • Your current rent helps us understand your total budget today
+      • In retirement, this money could go toward other expenses or lifestyle choices
+      
+      **If you plan to keep renting:** You can adjust this in the advanced settings to include ongoing housing costs in retirement.
+  
+  # Rent vs mortgage explanation
+  rentVsMortgage:
+    title: "Rent vs. Mortgage in Retirement Planning"
+    mortgage: "If you have a mortgage, you're building equity toward homeownership"
+    rent: "Rental payments don't build equity but offer flexibility"
+    planning: "Both paths can lead to successful retirement - it depends on your strategy"
+  
+  # Success/confirmation messages
+  success:
+    added: "Rental expenses included in your current budget calculations"
+    updated: "Rental information updated successfully"
+    removed: "Rental expenses removed from calculations"
+  
+  # Error messages
+  errors:
+    rentTooLow: "Monthly rent must be at least $200"
+    rentTooHigh: "Monthly rent cannot exceed $10,000"
+    invalidFormat: "Please enter a valid monthly rent amount"
+    required: "Please enter your monthly rent amount"
+  
+  # Tips and contextual help
+  tips:
+    firstHomeBuyer: |
+      **First home buyer?** Consider our Property Calculator to explore home buying options. 
+      Owning a home by retirement eliminates ongoing housing costs.
+    
+    investmentProperty: |
+      **Investment properties:** If your rent is partially offset by investment property 
+      income, you can adjust this in the advanced expense breakdown.
+    
+    retirementHousing: |
+      **Retirement housing options:** Many retirees downsize or move to areas with 
+      lower living costs. Our default assumes minimal housing costs in retirement.
+
+# HEM (Household Expenditure Measure) Integration
+hem:
+  # Household type selector
+  householdType:
+    label: "Household type"
+    helpText: "Select your household composition to use government spending estimates"
+    ariaLabel: "Select your household type for expense estimation"
+    
+    options:
+      single:
+        label: "Single person"
+        description: "Living alone or in a share house"
+        estimate: "$2,850"
+        fullDescription: "Single person household - $2,850/month average spending"
+        
+      couple:
+        label: "Couple (no children)"
+        description: "Two adults, no dependent children"
+        estimate: "$4,200"
+        fullDescription: "Couple household - $4,200/month average spending"
+        
+      family:
+        label: "Family (with children)"
+        description: "Adults with dependent children"
+        estimate: "$5,400"
+        fullDescription: "Family household - $5,400/month average spending"
+  
+  # HEM explanation and disclosure
+  disclosure:
+    summary: "What is HEM and how can it help my retirement planning?"
+    content: |
+      **Household Expenditure Measure (HEM)** is used by Australian banks and financial planners to estimate typical household spending.
+      
+      **Based on real Australian data:**
+      • Developed from Australian Bureau of Statistics spending surveys
+      • Updated regularly to reflect current living costs
+      • Includes essentials like food, utilities, transport, and modest discretionary spending
+      • Used by banks for home loan assessments and by Centrelink for pension calculations
+      
+      **How it helps you:**
+      • Provides a realistic baseline if you're unsure about your expenses
+      • Based on what similar Australian households actually spend
+      • Excludes housing costs (rent/mortgage) as these vary significantly
+      • Conservative estimates - you may spend less or more depending on lifestyle
+  
+  # Use HEM estimate button and process
+  useEstimate:
+    button: "Use HEM estimate for my expenses"
+    buttonLoading: "Applying HEM estimate..."
+    confirmTitle: "Apply HEM spending estimate?"
+    confirmContent: |
+      This will set your monthly expenses to **{amount}** based on the government's 
+      Household Expenditure Measure for {householdType} households.
+      
+      You can always adjust individual categories afterward to match your actual spending.
+    confirmButton: "Apply HEM Estimate"
+    cancelButton: "Keep Current Amounts"
+  
+  # Applied HEM indicator
+  applied:
+    badge: "HEM Estimate Applied"
+    description: "Based on Australian government spending data for {householdType}"
+    modify: "Modify individual categories"
+    reset: "Start over with HEM estimate"
+    
+  # HEM estimates breakdown (for detailed view)
+  breakdown:
+    title: "HEM Estimate Breakdown"
+    subtitle: "Average monthly spending for {householdType}"
+    note: "Housing costs (rent/mortgage) are calculated separately"
+    
+    categories:
+      food: "Food and groceries"
+      utilities: "Gas, electricity, water, internet"
+      transport: "Car expenses, fuel, public transport"
+      healthcare: "Medical, dental, pharmacy, private health insurance"
+      personal: "Clothing, personal care, mobile phone"
+      entertainment: "Dining out, hobbies, subscriptions"
+      household: "Household goods, maintenance, insurance"
+      education: "Education expenses, books, supplies"
+      other: "Miscellaneous and unexpected expenses"
+  
+  # Success/error messages
+  success:
+    applied: "HEM spending estimate applied to your expense categories"
+    updated: "Household type updated - new HEM estimates available"
+  
+  errors:
+    applyFailed: "Unable to apply HEM estimates. Please try again or enter expenses manually."
+    noHouseholdType: "Please select your household type first"
+    calculationError: "Error calculating HEM estimates for your household type"
+  
+  # Tips and warnings
+  tips:
+    personalisation: |
+      **Remember:** HEM provides average spending amounts. Review each category and adjust 
+      based on your actual lifestyle and spending patterns for more accurate results.
+    
+    exclusions: |
+      **Not included in HEM:** Rent/mortgage payments, investment contributions, 
+      debt repayments, and major one-off purchases. These are calculated separately.
+    
+    conservative: |
+      **Conservative estimates:** HEM amounts represent modest but adequate spending. 
+      If you have a higher lifestyle, increase the relevant categories accordingly.
+
+# Investment Validation and Error Handling
+investmentValidation:
+  # Main error messages when investments exceed available funds
+  errors:
+    exceedsAvailable:
+      title: "Investment amount exceeds available funds"
+      message: "You're trying to invest ${attempted} but only have ${available} available after expenses."
+      suggestion: "Try reducing your investment amount or adjusting your expenses."
+      
+    noFundsAvailable:
+      title: "No funds available for investing"
+      message: "Your expenses equal or exceed your income. You'll need to increase income or reduce expenses before you can start investing."
+      suggestion: "Review your expense categories to see where you might be able to reduce spending."
+      
+    negativeBalance:
+      title: "Expenses exceed income"
+      message: "Your total expenses are ${excess} more than your income."
+      suggestion: "This isn't sustainable long-term. Consider increasing income or reviewing your expense categories."
+  
+  # Helpful rebalancing suggestions
+  suggestions:
+    reduceInvestments:
+      title: "Reduce investment amounts"
+      options:
+        - "Reduce super contributions to the minimum 11%"
+        - "Lower your target investment amount"
+        - "Focus on paying off high-interest debt first"
+        
+    increaseIncome:
+      title: "Increase available funds"
+      options:
+        - "Include bonus, overtime, or side income"
+        - "Consider salary packaging opportunities"
+        - "Factor in upcoming pay rises"
+        
+    reduceExpenses:
+      title: "Review your expenses"
+      options:
+        - "Check if your expense estimates are realistic"
+        - "Look for categories where you could reduce spending"
+        - "Consider using HEM estimates as a baseline"
+  
+  # Progressive disclosure for investment strategy help
+  investmentHelp:
+    summary: "Help me balance my investments and expenses"
+    content: |
+      **Investment priority order:**
+      1. **Emergency fund** - 3-6 months of expenses in a high-interest savings account
+      2. **High-interest debt** - Pay off credit cards and personal loans first (usually 15-25% interest)
+      3. **Super contributions** - Contribute at least the minimum, consider salary sacrificing for tax benefits
+      4. **Investment property or shares** - Build wealth through capital growth and income
+      
+      **Getting the balance right:**
+      • Start with small, consistent amounts (even $50/week makes a difference)
+      • Gradually increase investments as your income grows
+      • Don't over-extend - leave room for unexpected expenses
+      • Review and adjust every 6-12 months as your situation changes
+  
+  # Warning messages for edge cases
+  warnings:
+    highInvestmentPercentage:
+      message: "You're investing {percentage}% of your income. This is quite aggressive."
+      suggestion: "Make sure you have enough left for unexpected expenses and lifestyle enjoyment."
+      
+    lowEmergencyBuffer:
+      message: "After investments, you have very little buffer for unexpected expenses."
+      suggestion: "Consider building an emergency fund before increasing investments."
+      
+    unrealisticExpenses:
+      message: "Your expenses seem low compared to typical Australian households."
+      suggestion: "Double-check your estimates or consider using HEM guidelines."
+  
+  # Success messages for well-balanced plans
+  success:
+    balancedPlan: "Great balance! You're investing {amount}/month while maintaining healthy cash flow."
+    strongPosition: "Excellent! You're on track to build substantial wealth while covering all expenses."
+    conservativeApproach: "Sensible approach - you're building wealth steadily with good financial security."
+
+# Form Field Integration Messages
+formFields:
+  # Dynamic helper text based on user input
+  income:
+    withHecs: "We'll automatically calculate your HECS/HELP repayments from this amount"
+    withoutHecs: "Your pre-tax annual income"
+    
+  expenses:
+    withRent: "Monthly expenses excluding rent (calculated separately)"
+    withoutRent: "All your monthly living expenses"
+    withHem: "Based on HEM estimate for {householdType} - adjust as needed"
+    
+  investments:
+    available: "Available for investing: ${amount}/month"
+    insufficient: "Insufficient funds - available: ${amount}/month"
+    
+# Accessibility Labels and Instructions  
+accessibility:
+  rentSection:
+    description: "Section for entering rental expense information"
+    instructions: "Check the box if you currently pay rent, then enter your monthly rental amount"
+    
+  hemSection:
+    description: "Household Expenditure Measure estimates based on government spending data"
+    instructions: "Select your household type to see average spending amounts, then choose whether to apply these estimates"
+    
+  investmentValidation:
+    description: "Shows whether your planned investments fit within your available funds"
+    errorAnnouncement: "Investment validation error"
+    suggestionAnnouncement: "Investment rebalancing suggestions available"
+    
+  householdTypeSelector:
+    description: "Dropdown menu to select your household composition type"
+    instructions: "Choose from single person, couple without children, or family with children"

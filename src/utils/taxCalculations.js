@@ -158,9 +158,9 @@ export function getTaxBracket(annualIncome) {
 /**
  * Calculate super guarantee contributions
  * @param {number} annualIncome - Annual gross income
- * @param {number} sgRate - Super guarantee rate (default 11.5% for 2024-25)
+ * @param {number} sgRate - Super guarantee rate (default 12% for 2025-26)
  * @returns {number} Annual SG contributions
  */
-export function calculateSuperGuarantee(annualIncome, sgRate = 0.115) {
+export function calculateSuperGuarantee(annualIncome, sgRate = 0.12) {
   return annualIncome * sgRate
 }

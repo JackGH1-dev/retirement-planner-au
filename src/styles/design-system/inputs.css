@@ -1,0 +1,188 @@
+/* 
+ * Australian Retirement Calculator - Input Design System
+ * WCAG 2.2 Level AA Compliant (4.5:1+ contrast ratios)
+ * Based on Australian Government Digital Service Standards
+ */
+
+/* ===== BASE INPUT CLASSES ===== */
+
+/* Standard text input - WCAG compliant white background with dark text */
+.form-input-base {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  color: #111827;
+  background-color: white;
+  transition: all 0.2s ease-in-out;
+  /* Contrast: 16.7:1 (white bg, dark text) - Exceeds WCAG AA */
+}
+
+.form-input-base:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgb(59 130 246 / 0.2);
+  outline: none;
+}
+
+.form-input-base::placeholder {
+  color: #6b7280;
+}
+
+/* Currency input with proper spacing for $ symbol */
+.form-input-currency {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  color: #111827;
+  background-color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-input-currency:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgb(59 130 246 / 0.2);
+  outline: none;
+}
+
+/* Large currency input for primary fields */
+.form-input-currency-large {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  color: #111827;
+  background-color: white;
+  font-size: 1.125rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-input-currency-large:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgb(59 130 246 / 0.2);
+  outline: none;
+}
+
+/* ===== STATE VARIATIONS ===== */
+
+/* Error state - maintains readability */
+.form-input-error-currency {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  border: 2px solid #ef4444;
+  border-radius: 0.5rem;
+  color: #7f1d1d;
+  background-color: #fef2f2;
+  font-size: 1.125rem;
+  transition: all 0.2s ease-in-out;
+  /* Contrast: 10.9:1 (red-50 bg, red-900 text) - Exceeds WCAG AA */
+}
+
+.form-input-error-currency:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgb(239 68 68 / 0.2);
+  outline: none;
+}
+
+/* Success state - clear positive feedback */
+.form-input-success {
+  @apply form-input-base border-green-500 bg-green-50 text-green-900;
+  @apply focus:border-green-500 focus:ring-green-200;
+  /* Contrast: 12.6:1 (green-50 bg, green-900 text) - Exceeds WCAG AA */
+}
+
+.form-input-success-currency {
+  @apply form-input-success pl-8;
+}
+
+/* Warning state */
+.form-input-warning {
+  @apply form-input-base border-yellow-500 bg-yellow-50 text-yellow-900;
+  @apply focus:border-yellow-500 focus:ring-yellow-200;
+  /* Contrast: 8.4:1 (yellow-50 bg, yellow-900 text) - Exceeds WCAG AA */
+}
+
+.form-input-warning-currency {
+  @apply form-input-warning pl-8;
+}
+
+/* Disabled state - still accessible */
+.form-input-disabled {
+  @apply form-input-base bg-gray-100 text-gray-600 border-gray-300 cursor-not-allowed;
+  @apply focus:ring-0 focus:border-gray-300;
+  /* Contrast: 4.8:1 (gray-100 bg, gray-600 text) - Meets WCAG AA */
+}
+
+/* ===== SPECIALIZED INPUTS ===== */
+
+/* Number input with enhanced mobile UX */
+.form-input-number {
+  @apply form-input-base;
+  /* inputmode and pattern should be added via HTML attributes */
+}
+
+.form-input-number-currency {
+  @apply form-input-number pl-8;
+}
+
+/* Range slider styling */
+.form-input-range {
+  @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-200;
+}
+
+.form-input-range::-webkit-slider-thumb {
+  @apply appearance-none h-5 w-5 rounded-full bg-blue-600 cursor-pointer;
+  @apply shadow-md hover:bg-blue-700 focus:bg-blue-700;
+}
+
+.form-input-range::-moz-range-thumb {
+  @apply h-5 w-5 rounded-full bg-blue-600 cursor-pointer border-0;
+  @apply shadow-md hover:bg-blue-700 focus:bg-blue-700;
+}
+
+/* ===== CURRENCY SYMBOLS ===== */
+
+.form-currency-symbol {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+  user-select: none;
+  font-weight: 500;
+  /* Contrast: 4.9:1 (gray-500 on white) - Meets WCAG AA */
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Mobile-first responsive inputs */
+@media (max-width: 640px) {
+  .form-input-base {
+    @apply text-base py-3; /* Prevents zoom on iOS */
+    min-height: 44px; /* Touch target accessibility */
+  }
+  
+  .form-input-currency {
+    @apply pl-10; /* More space for currency symbol on mobile */
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .form-input-base {
+    @apply border-black border-2;
+  }
+  
+  .form-input-base:focus {
+    @apply ring-4 ring-blue-600;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .form-input-base {
+    @apply transition-none;
+  }
+}

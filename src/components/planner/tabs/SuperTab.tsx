@@ -225,7 +225,7 @@ export const SuperTab: React.FC<SuperTabProps> = ({ value, settings, onChange })
                 <span className="absolute right-4 top-3 text-lg text-gray-500">%</span>
               </div>
               <p className="text-sm text-gray-500">
-                Currently 11.5%, increasing to 12% by 2025
+                Currently 12% as of 2025-26
               </p>
             </div>
 

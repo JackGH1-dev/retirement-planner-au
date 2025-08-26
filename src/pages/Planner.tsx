@@ -243,6 +243,11 @@ const Planner: React.FC = () => {
                 onChange={(goal) => updatePlannerState({ goal })}
                 presets={['Conservative', 'Base', 'Optimistic']}
                 onComplete={handleGoalComplete}
+                plannerState={plannerState}
+                onLoadScenario={(loadedState) => {
+                  console.log('[Planner] Loading scenario from Stage 1:', loadedState)
+                  updatePlannerState(loadedState)
+                }}
               />
             )}
 
@@ -267,6 +272,7 @@ const Planner: React.FC = () => {
             {currentStep === 'property' && (
               <PropertyStep
                 propertyData={plannerState.property}
+                plannerState={plannerState}
                 onChange={(property) => updatePlannerState({ property })}
                 onComplete={handlePropertyComplete}
                 onPrevious={handlePrevious}
@@ -320,7 +326,7 @@ const Planner: React.FC = () => {
           {/* Version Information */}
           <div className="text-center mt-8 py-4">
             <p className="text-xs text-gray-400">
-              Retirement Planner v1.01 • Australian-focused • Built with Claude Code
+              Retirement Planner v1.1.0 • Australian-focused • Built with Claude Code
             </p>
           </div>
         </div>

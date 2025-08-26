@@ -84,7 +84,7 @@ export type IncomeExpenseState = {
 
 export type SuperState = {
   balance: number
-  SGRate: number                           // employer SG rate (e.g., 0.115)
+  SGRate: number                           // employer SG rate (e.g., 0.12)
   salarySacrificeMonthly: number           // optional
   option: SuperOption                      // default: 'HighGrowth'
   feePct: number                          // e.g., 0.007
@@ -277,7 +277,7 @@ export const createDefaultPlannerState = (settings: AppSettings): PlannerState =
   },
   super: {
     balance: 150000,
-    SGRate: 0.115,
+    SGRate: 0.12,
     salarySacrificeMonthly: 0,
     option: settings.defaultSuperOption,
     feePct: 0.007,

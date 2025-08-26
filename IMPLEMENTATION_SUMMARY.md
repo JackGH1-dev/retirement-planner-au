@@ -1,17 +1,20 @@
-# 🚀 Optimise MVP Retirement Planner - Implementation Complete
+# 🚀 Optimise MVP Retirement Planner - Enhanced with HECS/HEM Integration
 
 ## ✅ **PRODUCTION READY: Complete Web Application Built**
 
 ### **🎯 What Was Built**
 A comprehensive, beginner-friendly retirement planning web application with:
 
-- **4-Step Wizard Interface** for intuitive user experience
-- **Australian Government Compliance** (SG rates, concessional caps, preservation age 60)
+- **5-Step Enhanced Wizard Interface** for intuitive user experience
+- **Australian Government Compliance** (SG rates, concessional caps, HECS/HELP thresholds, preservation age 60)
 - **Advanced Simulation Engine** with Web Workers for responsive UI
 - **Real-time Analytics** with Firebase integration
 - **Full Accessibility Support** (WCAG 2.1 AA compliant)
 - **Mobile-First Responsive Design** with Tailwind CSS v4
 - **Type-Safe Architecture** with TypeScript and Zod validation
+- **HECS/HELP Integration** with 2024-25 ATO repayment thresholds
+- **HEM Autofill** using current Household Expenditure Measure data
+- **Smart Expense Categorization** with rent separation and validation
 
 ---
 
@@ -77,11 +80,16 @@ A comprehensive, beginner-friendly retirement planning web application with:
 
 ## 🏗️ **Technical Architecture**
 
-### **1. 4-Step Wizard Flow**
+### **1. Enhanced 5-Step Wizard Flow**
 1. **Goal Setter**: Income vs Capital goal, retirement age, risk profile
-2. **Current Financials**: 5 tabs (Income, Super, Property, Portfolio, Buffers)
-3. **Planner Modules**: Super/ETF/Property optimization with live calculations
-4. **Results**: KPIs, projections, actionable insights, export functionality
+2. **Enhanced Current Financials**: Advanced income & spending with HECS/HEM integration
+   - ✅ **HECS/HELP Checkbox**: Automatic repayment calculation using 2024-25 ATO thresholds
+   - ✅ **Rent Separation**: Conditional rent input with smart expense categorization
+   - ✅ **HEM Integration**: One-click autofill using Household Expenditure Measure data
+   - ✅ **Investment Validation**: Real-time validation against available funds
+3. **Property Details**: Dedicated property investment planning
+4. **Planner Modules**: Super/ETF/Property optimization with live calculations
+5. **Results**: KPIs, projections, actionable insights, export functionality
 
 ### **2. Australian Government Integration**
 - **Concessional Cap**: $27,500 default with visual usage indicators
@@ -130,10 +138,11 @@ A comprehensive, beginner-friendly retirement planning web application with:
 
 ## 📊 **Analytics & Tracking**
 
-### **Event Types (20+ Events)**
+### **Event Types (25+ Events)**
 - User journey: `planner_step_completed`, `goal_type_selected`
 - Financial inputs: `salary_entered`, `super_balance_entered`, `salary_packaging_set`
-- Investment decisions: `etf_strategy_selected`, `property_strategy_selected`
+- **Enhanced inputs**: `hecs_enabled`, `rent_specified`, `hem_autofill_used`, `household_type_selected`
+- Investment decisions: `etf_strategy_selected`, `property_strategy_selected`, `investment_validation_triggered`
 - Simulation: `simulation_completed`, `simulation_error`
 - Exports: `plan_exported`, `settings_saved`
 

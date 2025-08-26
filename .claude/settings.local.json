@@ -13,7 +13,14 @@
       "Bash(git branch:*)",
       "Bash(git push:*)",
       "Bash(git remote remove:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git checkout:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:moneysmart.gov.au)",
+      "Bash(node:*)",
+      "WebFetch(domain:www.vanguard.com.au)"
     ],
     "deny": [],
     "ask": []

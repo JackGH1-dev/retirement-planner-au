@@ -1,0 +1,130 @@
+# Australian Retirement Calculator Copy
+
+## Form Field Labels
+salary:
+  label: "Annual salary (before tax)"
+  help: "Your gross salary including bonuses and overtime"
+  placeholder: "e.g., $75,000"
+  
+superBalance:
+  label: "Current super balance"
+  help: "Total amount across all your super accounts"
+  placeholder: "e.g., $85,000"
+
+retirementAge:
+  label: "When do you want to retire?"
+  help: "You can access super from age 60 in most cases"
+  
+monthlySpending:
+  label: "Monthly living expenses"
+  help: "Housing, food, transport, utilities, entertainment—personal expenses only"
+  placeholder: "e.g., $4,000"
+
+monthlyInvesting:
+  label: "Monthly investment amount"
+  help: "How much you can invest outside super each month"
+  placeholder: "e.g., $1,000"
+
+# HECS/HELP Integration
+hasHECS:
+  label: "I have a HECS/HELP loan"
+  help: "We'll automatically calculate your repayments based on current ATO rates"
+
+# Rent Integration  
+isRenting:
+  label: "I'm renting"
+  help: "This helps us separate your rent from other living expenses"
+
+monthlyRent:
+  label: "Monthly rent"
+  help: "Your monthly rental payment"
+  placeholder: "e.g., $2,200"
+
+# HEM Integration
+householdTypes:
+  single: 
+    label: "Single"
+    hemEstimate: "$2,850"
+  couple:
+    label: "Couple" 
+    hemEstimate: "$4,200"
+  familyWithKids:
+    label: "Family"
+    hemEstimate: "$5,400"
+
+## Helper Text
+salaryPackaging:
+  help: "Extra super contributions from your salary—saves on tax"
+  learnMore: "How does salary packaging work?"
+
+agePension:
+  help: "Government payment that may supplement your retirement income"
+  context: "We'll estimate your eligibility based on your details"
+
+investmentReturns:
+  help: "Average yearly growth of your investments after fees"
+  caveat: "Past returns don't guarantee future performance"
+
+## Error Messages
+validation:
+  salary:
+    required: "Please enter your annual salary"
+    tooLow: "Salary must be at least $18,200 (tax-free threshold)"
+    tooHigh: "Salary over $300,000? Consider speaking with a financial adviser"
+    
+  age:
+    required: "Please enter your current age"
+    tooYoung: "This calculator is for people aged 18 and over"
+    tooOld: "You may already be eligible for Age Pension—check with Centrelink"
+
+  superBalance:
+    negative: "Super balance can't be negative"
+    unrealistic: "Super balance over $3 million? Consider contribution caps"
+
+  monthlyInvesting:
+    exceedsAvailable: "This exceeds your available funds by ${amount}"
+    suggestion: "Consider reducing the amount or increasing your income"
+
+## Call-to-Action Copy
+navigation:
+  next: "Continue to next step"
+  back: "Go back and edit"
+  skip: "Skip this step"
+
+calculation:
+  calculate: "Show my retirement projection"
+  recalculate: "Update my projection"
+  reset: "Start over"
+
+results:
+  saveResults: "Save my retirement plan"
+  shareResults: "Share these results"
+  printResults: "Print or download PDF"
+
+## Success Messages
+hecs:
+  calculated: "HECS repayment: ${amount}/month automatically calculated"
+  
+hem:
+  applied: "HEM estimate applied: ${amount}/month for ${householdType}"
+  
+validation:
+  passed: "Great! You have ${amount} available for investing each month"
+  
+## Progressive Disclosure
+showMore: "Show more details"
+hideMore: "Hide details"
+
+advanced:
+  superOptions: "Super investment options"
+  etfStrategy: "Investment approach"
+  emergencyFund: "Safety buffer"
+
+## Australian Context
+terminology:
+  super: "super"
+  superannuation: "superannuation" 
+  agePension: "Age Pension"
+  centrelink: "Centrelink"
+  employer: "employer contributions"
+  takehome: "take-home pay"

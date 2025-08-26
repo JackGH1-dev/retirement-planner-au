@@ -2,7 +2,7 @@
 
 Application architecture, tech stack, and system design documentation.
 
-## Current Tech Stack (Aug 2025) - User Dashboard Complete
+## Current Tech Stack (Aug 2025) - Enhanced Planner with HECS/HEM Integration
 
 ### Core Framework & Build
 - **Vite 7.1** - Ultra-fast build tool with HMR and modern bundling
@@ -42,13 +42,26 @@ Application architecture, tech stack, and system design documentation.
 - **Buffer policy:** Pause ETF DCA only when buffers dip below target
 - **Property defaults:** mgmt 7%, maintenance 5% of rent, insurance $500, council rates $1,800, vacancy 2%
 - **Presets:** Conservative/Base/Optimistic assumptions
+- **HECS/HELP:** 2024-25 ATO thresholds with automatic repayment calculation
+- **HEM Integration:** Household Expenditure Measure estimates for different household types
+- **Rent Separation:** Conditional rent input with expense categorization
+- **Investment Validation:** Real-time validation against available funds after all deductions
 
 ### Simulation Engine (Client-Side)
 ```javascript
 // Web Worker Interface
 interface PlannerInput {
   goal: { currentAge: number, retireAge: number, targetIncomeYearly: number, assumptionPreset: 'Conservative' | 'Base' | 'Optimistic' }
-  incomeExpense: { salary: number, wageGrowthPct: number, expensesMonthly: number }
+  incomeExpense: { 
+    salary: number, 
+    wageGrowthPct: number, 
+    monthlyExpenses: number,
+    hasHECS?: boolean,
+    hecsRepayment?: number,
+    isRenting?: boolean,
+    monthlyRent?: number,
+    householdType?: 'single' | 'couple' | 'familyWithKids'
+  }
   super: { balance: number, SGRate: number, salarySacrificeMonthly: number, option: 'Balanced' | 'Growth' | 'HighGrowth', feePct: number, concessionalCapYearly: number }
   property: { value: number, loanBalance: number, ratePct: number, ioOrPi: 'IO' | 'PI', termMonths: number, offsetBalance: number, rentPerWeek: number, mgmtFeePct: number, insuranceYearly: number, councilRatesYearly: number, maintenancePctOfRent: number, vacancyPct: number, extraRepaymentMonthly: number }
   portfolio: { startingBalance: number, dcaMonthly: number, allocationPreset: 'OneETF' | 'TwoETF', weights: { aus: number, global: number }, feePct: number }

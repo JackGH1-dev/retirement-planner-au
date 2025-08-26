@@ -1,6 +1,6 @@
 {
   "name": "optimise-retirement-planner",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Beginner-friendly Australian retirement planning web application",
   "private": true,
   "type": "module",

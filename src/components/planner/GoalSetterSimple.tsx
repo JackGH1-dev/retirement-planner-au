@@ -4,19 +4,24 @@
  */
 
 import React, { useState } from 'react'
+import { ScenarioManager } from './ScenarioManager'
 
 interface GoalSetterProps {
   value: any
   onChange: (value: any) => void
   presets: string[]
   onComplete: (data: any) => void
+  plannerState?: any
+  onLoadScenario?: (plannerState: any) => void
 }
 
 export const GoalSetter: React.FC<GoalSetterProps> = ({
   value,
   onChange,
   presets,
-  onComplete
+  onComplete,
+  plannerState,
+  onLoadScenario
 }) => {
   const [goalType, setGoalType] = useState('income')
   const [currentAge, setCurrentAge] = useState(30)
@@ -57,6 +62,18 @@ export const GoalSetter: React.FC<GoalSetterProps> = ({
     <div className="bg-white rounded-2xl shadow-xl p-8">
       <h2 className="text-2xl font-bold text-gray-800 mb-2">What's your retirement goal?</h2>
       <p className="text-gray-600 mb-6">Pick what feels right—you can change this later.</p>
+      
+      {/* Scenario Management */}
+      {plannerState && onLoadScenario && (
+        <ScenarioManager
+          plannerState={plannerState}
+          onLoadScenario={onLoadScenario}
+          onScenarioSaved={() => {
+            // Could add notification logic here
+          }}
+          className="mb-6"
+        />
+      )}
       
       <div className="space-y-8">
         {/* Goal Type Toggle */}

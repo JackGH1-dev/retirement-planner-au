@@ -288,7 +288,7 @@ export const initializeAnalytics = (): void => {
   }
 
   logEvent('simulation_started', {
-    planner_version: '1.0.0',
+    planner_version: '1.1.0',
     ...capabilities
   } as any)
 }

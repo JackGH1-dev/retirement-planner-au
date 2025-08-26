@@ -32,20 +32,23 @@ The app has two main pages:
 - Welcome page with feature overview
 - "Get Started" button to access the planner
 
-### **Planner Demo** (`http://localhost:3000/planner`)
-- **4-Step Wizard Interface:**
+### **Enhanced Planner** (`http://localhost:3000/app/planner`)
+- **5-Step Enhanced Wizard Interface:**
   1. **Set Goals**: Age, retirement age, target income
-  2. **Current Situation**: Salary, super balance, investments
-  3. **Investment Strategy**: Auto-selected strategies 
-  4. **Results**: Projected assets and retirement income
+  2. **Current Situation**: Enhanced income & spending with HECS/HEM integration
+  3. **Property Details**: Dedicated property investment planning  
+  4. **Investment Strategy**: Super/ETF/Property optimization modules
+  5. **Results**: Projected assets and retirement income with actionable insights
 
 ## **What You'll See**
 
-### **🎯 Core Features Demonstrated:**
+### **🎯 Enhanced Core Features Demonstrated:**
 - **Beginner-friendly interface** with plain language
-- **Australian context** (super, salary packaging)
-- **Real-time calculations** as you change inputs
-- **Visual progress tracking** through the 4 steps
+- **Australian context** (super, salary packaging, HECS/HELP, HEM data)
+- **Real-time calculations** with enhanced validation
+- **Visual progress tracking** through the 5 enhanced steps
+- **Smart input assistance** (HEM autofill, HECS auto-calculation, rent separation)
+- **Investment validation** preventing over-investing beyond available funds
 - **Actionable results** with specific next steps
 
 ### **📊 Sample Calculation:**

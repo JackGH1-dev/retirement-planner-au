@@ -5,6 +5,102 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Essential input fixes for contrast issues */
+@layer components {
+  .form-input-currency-large {
+    @apply w-full pl-8 pr-4 py-3 border-2 border-gray-300 rounded-lg text-lg bg-white text-gray-900 focus:border-blue-500 focus:outline-none transition-colors;
+  }
+  
+  .form-input-currency {
+    @apply w-full pl-8 pr-4 py-3 border-2 border-gray-300 rounded-lg bg-white text-gray-900 focus:border-blue-500 focus:outline-none transition-colors;
+  }
+  
+  .form-input-error-currency {
+    @apply w-full pl-8 pr-4 py-3 border-2 border-red-500 rounded-lg text-lg bg-red-50 text-red-900 focus:border-red-500 focus:outline-none transition-colors;
+  }
+  
+  .form-currency-symbol {
+    @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none select-none font-medium;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-gray-900 mb-2;
+  }
+  
+  .form-checkbox {
+    @apply h-4 w-4 rounded border-2 border-gray-300 bg-white text-blue-600;
+    @apply focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:border-blue-500;
+    @apply hover:border-gray-400 transition-colors duration-200;
+  }
+  
+  .form-checkbox:checked {
+    @apply bg-blue-600 border-blue-600;
+  }
+  
+  .form-checkbox-label {
+    @apply flex items-start gap-3 cursor-pointer;
+  }
+  
+  .form-checkbox-content {
+    @apply flex-1;
+  }
+  
+  .form-checkbox-title {
+    @apply font-medium text-gray-900;
+  }
+  
+  .form-checkbox-description {
+    @apply text-sm text-gray-600 mt-1;
+  }
+  
+  .form-feature-card-hecs {
+    @apply p-3 rounded-lg border-2 border-blue-300 bg-blue-50 transition-all duration-200;
+  }
+  
+  .form-feature-card-rent {
+    @apply p-3 rounded-lg border-2 border-purple-300 bg-purple-50 transition-all duration-200;
+  }
+  
+  .form-feature-card-hem {
+    @apply p-3 rounded-lg border-2 border-green-300 bg-green-50 transition-all duration-200;
+  }
+  
+  .form-validation-success {
+    @apply mt-2 p-3 bg-green-50 border border-green-200 rounded-lg;
+  }
+  
+  .form-validation-success .form-validation-title {
+    @apply text-sm font-medium text-green-800 mb-1;
+  }
+  
+  .form-validation-success .form-validation-message {
+    @apply text-sm text-green-700;
+  }
+  
+  .form-validation-error {
+    @apply mt-2 p-3 bg-red-50 border border-red-200 rounded-lg;
+  }
+  
+  .form-validation-error .form-validation-title {
+    @apply text-sm font-medium text-red-800 mb-1;
+  }
+  
+  .form-validation-error .form-validation-message {
+    @apply text-sm text-red-700;
+  }
+  
+  .form-button-success {
+    @apply px-4 py-2 rounded-lg font-semibold bg-green-600 text-white transition-colors duration-200;
+    @apply hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
+    min-height: 44px;
+  }
+  
+  .form-button-small {
+    @apply text-xs px-3 py-1;
+    min-height: 32px;
+  }
+}
+
 /* Base styles */
 @layer base {
   html {
@@ -32,6 +128,35 @@
   
   .form-input {
     @apply w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-lg bg-white text-gray-900 focus:border-blue-500 focus:outline-none transition-colors;
+  }
+
+  /* Custom checkbox styling to match blue theme */
+  input[type="checkbox"] {
+    @apply w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:ring-offset-0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #ffffff !important;
+    border: 2px solid #d1d5db !important;
+    position: relative;
+  }
+  
+  input[type="checkbox"]:checked {
+    @apply bg-blue-600 border-blue-600;
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+  }
+  
+  input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
   }
 
   /* Custom slider styling for better UX */

@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Australian Retirement Calculator Schema",
+  "description": "Complete data model for retirement planning calculator with Australian compliance",
+  "type": "object",
+  "properties": {
+    "personal": {
+      "type": "object",
+      "properties": {
+        "currentAge": { "type": "number", "minimum": 18, "maximum": 100 },
+        "retirementAge": { "type": "number", "minimum": 55, "maximum": 75 },
+        "state": { "enum": ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] },
+        "maritalStatus": { "enum": ["single", "couple"] },
+        "dependentsCount": { "type": "number", "minimum": 0, "maximum": 10 },
+        "householdType": { "enum": ["single", "couple", "familyWithKids"] },
+        "homeOwner": { "type": "boolean" }
+      },
+      "required": ["currentAge", "retirementAge", "state"]
+    },
+    "incomeExpense": {
+      "type": "object",
+      "properties": {
+        "salary": { "type": "number", "minimum": 0, "maximum": 1000000 },
+        "secondaryIncome": { "type": "number", "minimum": 0 },
+        "partnerIncome": { "type": "number", "minimum": 0 },
+        "rentalIncome": { "type": "number", "minimum": 0 },
+        "monthlyExpenses": { "type": "number", "minimum": 0 },
+        "hasHECS": { "type": "boolean" },
+        "hecsRepayment": { "type": "number", "minimum": 0 },
+        "isRenting": { "type": "boolean" },
+        "monthlyRent": { "type": "number", "minimum": 0 },
+        "wageGrowthPct": { "type": "number", "minimum": -0.1, "maximum": 0.2 }
+      },
+      "required": ["salary", "monthlyExpenses"]
+    },
+    "superannuation": {
+      "type": "object", 
+      "properties": {
+        "currentBalance": { "type": "number", "minimum": 0 },
+        "employerContributions": { "type": "number", "minimum": 0.095, "maximum": 0.125 },
+        "salaryPackaging": { "type": "number", "minimum": 0, "maximum": 27500 },
+        "option": { "enum": ["Balanced", "Growth", "HighGrowth"] },
+        "feePct": { "type": "number", "minimum": 0.001, "maximum": 0.03 },
+        "insuranceInSuper": { "type": "boolean" }
+      },
+      "required": ["currentBalance", "employerContributions"]
+    },
+    "investments": {
+      "type": "object",
+      "properties": {
+        "currentPortfolioValue": { "type": "number", "minimum": 0 },
+        "monthlyInvestment": { "type": "number", "minimum": 0 },
+        "allocationPreset": { "enum": ["OneETF", "TwoETF", "Custom"] },
+        "riskProfile": { "enum": ["conservative", "balanced", "growth"] },
+        "feePct": { "type": "number", "minimum": 0.0003, "maximum": 0.015 }
+      }
+    },
+    "property": {
+      "type": "object",
+      "properties": {
+        "hasInvestmentProperty": { "type": "boolean" },
+        "propertyValue": { "type": "number", "minimum": 0 },
+        "mortgageBalance": { "type": "number", "minimum": 0 },
+        "interestRate": { "type": "number", "minimum": 0.01, "maximum": 0.15 },
+        "rentalYield": { "type": "number", "minimum": 0, "maximum": 0.2 },
+        "managementFeesPct": { "type": "number", "default": 0.07 },
+        "annualInsurance": { "type": "number", "default": 500 },
+        "annualRates": { "type": "number", "default": 1800 }
+      }
+    },
+    "buffers": {
+      "type": "object",
+      "properties": {
+        "emergencyFundMonths": { "type": "number", "minimum": 0, "maximum": 24 },
+        "emergencyFundTarget": { "type": "number", "minimum": 0 },
+        "cashHoldings": { "type": "number", "minimum": 0 }
+      }
+    },
+    "debt": {
+      "type": "object",
+      "properties": {
+        "creditCardDebt": { "type": "number", "minimum": 0 },
+        "personalLoans": { "type": "number", "minimum": 0 },
+        "carLoans": { "type": "number", "minimum": 0 },
+        "otherDebts": { "type": "number", "minimum": 0 }
+      }
+    },
+    "agePension": {
+      "type": "object",
+      "properties": {
+        "includeInProjection": { "type": "boolean", "default": true },
+        "estimatedEligibility": { "enum": ["full", "partial", "none", "unknown"] }
+      }
+    },
+    "assumptions": {
+      "type": "object",
+      "properties": {
+        "inflationRate": { "type": "number", "minimum": 0, "maximum": 0.1, "default": 0.025 },
+        "investmentReturns": {
+          "type": "object",
+          "properties": {
+            "superGrowth": { "type": "number", "default": 0.065 },
+            "superBalanced": { "type": "number", "default": 0.055 },
+            "etfReturns": { "type": "number", "default": 0.07 },
+            "propertyGrowth": { "type": "number", "default": 0.04 },
+            "cashReturns": { "type": "number", "default": 0.02 }
+          }
+        }
+      }
+    }
+  },
+  "required": ["personal", "incomeExpense", "superannuation"]
+}

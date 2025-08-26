@@ -90,7 +90,7 @@ export const superSchema = z.object({
   SGRate: z.number()
     .min(0.09, 'SG rate should be at least 9%')
     .max(0.15, 'SG rate should be under 15%')
-    .default(0.115),
+    .default(0.12),
     
   salarySacrificeMonthly: z.number()
     .min(0, 'Salary sacrifice cannot be negative')
@@ -368,7 +368,7 @@ export const createDefaultPlannerState = (settings?: Partial<z.infer<typeof appS
     },
     super: {
       balance: 150000,
-      SGRate: 0.115,
+      SGRate: 0.12,
       option: defaultSettings.defaultSuperOption,
       concessionalCapYearly: defaultSettings.concessionalCapYearly
     },

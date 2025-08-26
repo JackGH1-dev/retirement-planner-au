@@ -1,0 +1,170 @@
+{
+  "agentOrchestration": {
+    "autoRouting": {
+      "enabled": true,
+      "confidenceThreshold": 0.85,
+      "fallbackToManual": true
+    },
+    "routingRules": {
+      "content": {
+        "triggers": ["field labels", "helper text", "error messages", "calculator copy", "UX copy", "form labels"],
+        "agent": "ux-copywriter-calculators",
+        "model": "claude-3-haiku",
+        "priority": "low",
+        "autoRoute": true
+      },
+      "seo": {
+        "triggers": ["meta titles", "descriptions", "FAQ snippets", "SEO optimization", "internal linking"],
+        "agent": "seo-meta-optimizer", 
+        "model": "claude-3-haiku",
+        "priority": "low",
+        "autoRoute": true
+      },
+      "accessibility": {
+        "triggers": ["WCAG review", "accessibility audit", "form a11y", "keyboard navigation", "ARIA"],
+        "agent": "accessibility-auditor-finance",
+        "model": "claude-3-sonnet",
+        "priority": "medium",
+        "autoRoute": true
+      },
+      "testing": {
+        "triggers": ["unit tests", "integration tests", "test coverage", "calculation validation"],
+        "agent": "test-author-runner",
+        "model": "claude-3-haiku", 
+        "priority": "medium",
+        "autoRoute": true
+      },
+      "components": {
+        "triggers": ["form components", "UI components", "accessible inputs", "results charts"],
+        "agent": "component-builder",
+        "model": "claude-3-sonnet",
+        "priority": "medium", 
+        "autoRoute": true
+      },
+      "performance": {
+        "triggers": ["bundle size", "performance budget", "LCP", "INP", "lazy loading"],
+        "agent": "performance-budget-enforcer",
+        "model": "claude-3-haiku",
+        "priority": "medium",
+        "autoRoute": true
+      }
+    },
+    "manualGateRules": {
+      "pension-logic": {
+        "triggers": ["Age Pension", "income test", "assets test", "pension eligibility", "pension rules"],
+        "agent": "pension-rules-module-engineer", 
+        "model": "claude-3-opus",
+        "priority": "critical",
+        "autoRoute": false,
+        "requiresApproval": true,
+        "complianceCheck": true
+      },
+      "assumptions": {
+        "triggers": ["policy assumptions", "contribution caps", "bring-forward", "super rules", "ASIC guidance"],
+        "agent": "assumptions-policy-annotator",
+        "model": "claude-3-opus", 
+        "priority": "critical",
+        "autoRoute": false,
+        "requiresApproval": true,
+        "complianceCheck": true
+      },
+      "disclaimers": {
+        "triggers": ["disclaimer", "legal content", "scope limitations", "assumptions disclosure"],
+        "agent": "disclosure-disclaimer-writer",
+        "model": "claude-3-opus",
+        "priority": "critical", 
+        "autoRoute": false,
+        "requiresApproval": true,
+        "legalReview": true
+      },
+      "calculations": {
+        "triggers": ["projection logic", "calculation engine", "accumulation", "drawdown", "scenario branching"],
+        "agent": "projection-calculator-engineer",
+        "model": "claude-3-opus",
+        "priority": "critical",
+        "autoRoute": false,
+        "requiresApproval": true,
+        "accuracyCheck": true
+      },
+      "domain-model": {
+        "triggers": ["data model", "schema design", "domain modeling", "input output structure"],
+        "agent": "retirement-domain-modeler", 
+        "model": "claude-3-opus",
+        "priority": "critical",
+        "autoRoute": false,
+        "requiresApproval": true,
+        "architectureReview": true
+      }
+    }
+  },
+  "artifactFlow": {
+    "sequence": [
+      "schema.json",
+      "assumptions.md", 
+      "calc.ts",
+      "pension.ts",
+      "validation.ts",
+      "components/",
+      "copy.yaml",
+      "test-suites/",
+      "a11y-report.md",
+      "disclaimer.md",
+      "meta.csv",
+      "release-checklist.md"
+    ],
+    "dependencies": {
+      "calc.ts": ["schema.json", "assumptions.md"],
+      "pension.ts": ["schema.json", "assumptions.md"],
+      "validation.ts": ["schema.json"],
+      "components/": ["schema.json", "copy.yaml"],
+      "test-suites/": ["calc.ts", "pension.ts", "validation.ts"],
+      "release-checklist.md": ["a11y-report.md", "disclaimer.md", "test-report.md"]
+    }
+  },
+  "qualityGates": {
+    "preRelease": {
+      "requiredArtifacts": [
+        "assumptions.md",
+        "disclaimer.md", 
+        "a11y-report.md",
+        "perf-report.md",
+        "test-report.md",
+        "release-checklist.md"
+      ],
+      "thresholds": {
+        "testCoverage": 90,
+        "accessibilityScore": 95,
+        "performanceBudget": "< 100KB",
+        "lcpTarget": "< 2.5s"
+      }
+    }
+  },
+  "modelAssignments": {
+    "routine": {
+      "model": "claude-3-haiku",
+      "agents": ["ux-copywriter-calculators", "seo-meta-optimizer", "performance-budget-enforcer", "test-author-runner"],
+      "costProfile": "low",
+      "latencyTarget": "< 2s"
+    },
+    "analysis": {
+      "model": "claude-3-sonnet", 
+      "agents": ["accessibility-auditor-finance", "component-builder", "results-explainer-coach", "analytics-planner"],
+      "costProfile": "medium",
+      "latencyTarget": "< 5s"
+    },
+    "critical": {
+      "model": "claude-3-opus",
+      "agents": ["pension-rules-module-engineer", "assumptions-policy-annotator", "disclosure-disclaimer-writer", "projection-calculator-engineer", "retirement-domain-modeler"],
+      "costProfile": "high", 
+      "latencyTarget": "< 10s"
+    }
+  },
+  "complianceSettings": {
+    "australianRetirementContext": true,
+    "asicGuidanceRequired": true,
+    "superFundPatterns": true,
+    "agePensionCompliance": true,
+    "accessibilityWCAG22": true,
+    "privacyActCompliance": true
+  }
+}
